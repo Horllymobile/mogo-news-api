@@ -1,28 +1,18 @@
-FROM node:18
-
-
-# Set the working directory to /app
-RUN mkdir -p /usr/src/app
+# Stage 1: Build the application
+FROM node:18-alpine AS build
 WORKDIR /usr/src/app
+COPY package.json yarn.lock* ./
+RUN yarn install --frozen-lockfile
+COPY . .
+RUN yarn run build
 
-# Copy the package*.json files
-COPY package*.json ./
+# Stage 2: Create the production image
+FROM node:18-alpine
+WORKDIR /usr/src/app
+COPY --from=build /usr/src/app/dist ./dist
+COPY package.json yarn.lock* ./
+RUN yarn install --frozen-lockfile --production
 
-# Install app dependencies
-RUN npm install --legacy-peer-deps
-
-# Copy the application code
-COPY . /usr/src/app
-
-# Creates a "dist" folder with the production build
-RUN npm run build
-
-
-# Make port 80 available to the world outside this container
 EXPOSE 80
-
-# Define environment variable
 ENV NODE_ENV=production
-
-# Run command to start NestJS application
 CMD ["npm", "run", "start:prod"]

@@ -1,17 +1,22 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom } from 'rxjs';
 import { NewsEntity } from '../entity/news.entity';
 import { NewsRepository } from '../repository/news.repository';
 import * as cheerio from 'cheerio';
-import { link } from 'fs';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 
 @Injectable()
 export class NewsService {
   constructor(
     private httpService: HttpService,
     @InjectRepository(NewsEntity) private newsRepo: NewsRepository,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async crawlPunch() {
@@ -290,10 +295,20 @@ export class NewsService {
       {} as Record<string, typeof newsData>,
     );
 
-    return Object.entries(groupedNews).map(([blog, news]) => ({
+    const data = Object.entries(groupedNews).map(([blog, news]) => ({
       blog,
       news,
     }));
+
+    const cachedNews = await this.cacheManager.get('news');
+    if (!cachedNews) {
+      const hour = 1000 * 60;
+      await this.cacheManager.set('news', data, hour);
+
+      return data;
+    }
+    // await this.cacheManager.clear();
+    return await cachedNews;
   }
 
   async deleteNews() {
