@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM node:18-alpine AS build
+FROM node:20 AS build
 WORKDIR /usr/src/app
 COPY package.json yarn.lock* ./
 RUN yarn install --frozen-lockfile
