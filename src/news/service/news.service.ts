@@ -298,6 +298,8 @@ export class NewsService {
 
   async deleteNews() {
     const newsData = await this.newsRepo.find();
-    await this.newsRepo.delete(newsData.map((news) => news.id));
+    if (newsData.length > 0) {
+      await this.newsRepo.delete(newsData.map((news) => news.id));
+    }
   }
 }

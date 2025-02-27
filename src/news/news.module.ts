@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { NewsEntity } from './entity/news.entity';
 import { NewsController } from './controller/news.controller';
 import { NewsRepository } from './repository/news.repository';
-import { TasksService } from 'src/core/services/task.service';
+import { TasksService } from '../core/services/task.service';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({

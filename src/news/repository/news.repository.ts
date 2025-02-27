@@ -1,4 +1,4 @@
-import { NewsEntity } from 'src/news/entity/news.entity';
+import { NewsEntity } from '../entity/news.entity';
 import { Repository } from 'typeorm';
 
 export class NewsRepository extends Repository<NewsEntity> {}

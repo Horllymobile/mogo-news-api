@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { NewsService } from 'src/news/service/news.service';
+import { NewsService } from '../../news/service/news.service';
 
 @Injectable()
 export class TasksService {
@@ -12,6 +12,7 @@ export class TasksService {
   @Cron(CronExpression.EVERY_HOUR)
   async deleteNews() {
     this.logger.debug('deleteNews News Every 1 hour');
+    await this.newsService.deleteNews();
   }
 
   // @Cron(CronExpression.EVERY_MINUTE)
