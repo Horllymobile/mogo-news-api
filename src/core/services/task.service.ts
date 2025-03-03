@@ -8,8 +8,8 @@ export class TasksService {
 
   constructor(private newsService: NewsService) {}
 
-  @Cron(CronExpression.EVERY_MINUTE, { name: 'deleteNews' })
-  // @Cron(CronExpression.EVERY_HOUR, { name: 'deleteNews' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'deleteNews' })
+  @Cron(CronExpression.EVERY_HOUR, { name: 'deleteNews' })
   async deleteNews() {
     this.logger.debug('deleteNews News Every 1 hour');
     // await this.newsService.deleteNews();

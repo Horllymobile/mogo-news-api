@@ -15,7 +15,7 @@ export class LegitService {
     // await this.newsService.crawlLegit();
   }
 
-  //   @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitPolitics' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitPolitics' })
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlLegitPolitics' })
   async crawlLegitPolitics() {
     this.logger.debug('crawlLegitPolitics News Every 1 hour');
@@ -25,7 +25,7 @@ export class LegitService {
     );
   }
 
-  //   @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitEntertainment' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitEntertainment' })
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlLegitEntertainment' })
   async crawlLegitEntertainment() {
     this.logger.debug('crawlLegitEntertainment News Every 1 hour');
@@ -35,7 +35,7 @@ export class LegitService {
     );
   }
 
-  //   @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitEducation' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitEducation' })
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlLegitEducation' })
   async crawlLegitEducation() {
     this.logger.debug('crawlLegitEducation News Every 1 hour');
@@ -45,7 +45,7 @@ export class LegitService {
     );
   }
 
-  //   @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitEconomy' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitEconomy' })
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlLegitEconomy' })
   async crawlLegitEconomy() {
     this.logger.debug('crawlLegitEconomy News Every 1 hour');
@@ -55,7 +55,7 @@ export class LegitService {
     );
   }
 
-  //   @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitSports' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitSports' })
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlLegitSports' })
   async crawlLegitSports() {
     this.logger.debug('crawlLegitSports News Every 1 hour');
@@ -65,7 +65,7 @@ export class LegitService {
     );
   }
 
-  //   @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitWorld' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitWorld' })
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlLegitWorld' })
   async crawlLegitWorld() {
     this.logger.debug('crawlLegitWorld News Every 1 hour');
@@ -75,7 +75,7 @@ export class LegitService {
     );
   }
 
-  //   @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitPeople' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitPeople' })
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlLegitPeople' })
   async crawlLegitPeople() {
     this.logger.debug('crawlLegitPeople News Every 1 hour');
@@ -85,7 +85,7 @@ export class LegitService {
     );
   }
 
-  //   @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitTechnology' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitTechnology' })
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlLegitTechnology' })
   async crawlLegitTechnology() {
     this.logger.debug('crawlLegitTechnology News Every 1 hour');
@@ -95,7 +95,7 @@ export class LegitService {
     );
   }
 
-  //   @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitBusiness' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitBusiness' })
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlLegitBusiness' })
   async crawlLegitBusiness() {
     this.logger.debug('crawlLegitBusiness News Every 1 hour');

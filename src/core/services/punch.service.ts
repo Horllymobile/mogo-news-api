@@ -12,11 +12,11 @@ export class PunchService {
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunch' })
   async crawlPunch() {
     this.logger.debug('crawlPunch News Every 1 hour');
-    // await this.newsService.crawlPunch();
+    await this.newsService.crawlPunch();
   }
 
-  @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchPolitics' })
-  //   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchPolitics' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchPolitics' })
+  @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchPolitics' })
   async crawlPunchPolitics() {
     this.logger.debug('crawlPunchPolitics News Every 1 hour');
     await this.newsService.crawlPunchByCategory(
@@ -25,8 +25,8 @@ export class PunchService {
     );
   }
 
-  @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchSports' })
-  //   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchSports' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchSports' })
+  @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchSports' })
   async crawlPunchSports() {
     this.logger.debug('crawlPunchSports News Every 1 hour');
     await this.newsService.crawlPunchByCategory(
@@ -35,8 +35,8 @@ export class PunchService {
     );
   }
 
-  @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchBusiness' })
-  //   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchBusiness' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchBusiness' })
+  @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchBusiness' })
   async crawlPunchBusiness() {
     this.logger.debug('crawlPunchBusiness News Every 1 hour');
     await this.newsService.crawlPunchByCategory(
@@ -45,8 +45,8 @@ export class PunchService {
     );
   }
 
-  @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchEntertainment' })
-  //   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchEntertainment' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchEntertainment' })
+  @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchEntertainment' })
   async crawlPunchEntertainment() {
     this.logger.debug('crawlPunchEntertainment News Every 1 hour');
     await this.newsService.crawlPunchByCategory(
@@ -55,8 +55,8 @@ export class PunchService {
     );
   }
 
-  @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchEducation' })
-  //   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchEducation' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchEducation' })
+  @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchEducation' })
   async crawlPunchEducation() {
     this.logger.debug('crawlPunchEducation News Every 1 hour');
     await this.newsService.crawlPunchByCategory(
@@ -65,8 +65,8 @@ export class PunchService {
     );
   }
 
-  @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchLifestyle' })
-  //   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchLifestyle' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchLifestyle' })
+  @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchLifestyle' })
   async crawlPunchLifestyle() {
     this.logger.debug('crawlPunchLifestyle News Every 1 hour');
     await this.newsService.crawlPunchByCategory(
@@ -75,8 +75,8 @@ export class PunchService {
     );
   }
 
-  @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchTechnology' })
-  //   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchTechnology' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlPunchTechnology' })
+  @Cron(CronExpression.EVERY_HOUR, { name: 'crawlPunchTechnology' })
   async crawlPunchTechnology() {
     this.logger.debug('crawlPunchTechnology News Every 1 hour');
     await this.newsService.crawlPunchByCategory(

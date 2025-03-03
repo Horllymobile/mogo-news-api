@@ -7,6 +7,7 @@ export class NewsController {
 
   @Get('/get-news')
   async getNews(@Query('category') category?: string) {
+    console.log(category);
     const news = await this.newsService.getNews(category);
     return {
       data: news,

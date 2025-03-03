@@ -68,6 +68,12 @@ export class NewsService {
               });
           });
       });
+      scrapedData = scrapedData.filter(
+        (value) =>
+          value.time.includes('minutes') ||
+          value.time.includes('hours') ||
+          value.time.includes('hour'),
+      );
       // console.log(scrapedData);
       if (scrapedData.length) {
         await this.newsRepo.save(
@@ -127,19 +133,25 @@ export class NewsService {
           });
         }
       });
-      console.log(scrapedData);
-      // if (scrapedData.length) {
-      //   await this.newsRepo.save(
-      //     scrapedData.map((news) => ({
-      //       title: news.title,
-      //       time: news.time,
-      //       link: news.link,
-      //       blog: news.blog,
-      //       category: news.category,
-      //       created_at: new Date().toISOString(),
-      //     })),
-      //   );
-      // }
+      scrapedData = scrapedData.filter(
+        (value) =>
+          value.time.includes('minutes') ||
+          value.time.includes('hours') ||
+          value.time.includes('hour'),
+      );
+      // console.log(scrapedData);
+      if (scrapedData.length) {
+        await this.newsRepo.save(
+          scrapedData.map((news) => ({
+            title: news.title,
+            time: news.time,
+            link: news.link,
+            blog: news.blog,
+            category: news.category,
+            created_at: new Date().toISOString(),
+          })),
+        );
+      }
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException({
@@ -203,6 +215,12 @@ export class NewsService {
           });
       });
       // console.log(scrapedData);
+      scrapedData = scrapedData.filter(
+        (value) =>
+          value.time.includes('minutes') ||
+          value.time.includes('hours') ||
+          value.time.includes('hour'),
+      );
       if (scrapedData.length) {
         await this.newsRepo.save(
           scrapedData.map((news) => ({
@@ -278,24 +296,25 @@ export class NewsService {
           });
         }
       });
-      console.log(
-        scrapedData.filter(
-          (value) =>
-            value.time.includes('minutes') || value.time.includes('hours'),
-        ),
+
+      scrapedData = scrapedData.filter(
+        (value) =>
+          value.time.includes('minutes') ||
+          value.time.includes('hours') ||
+          value.time.includes('hour'),
       );
-      // if (scrapedData.length) {
-      //   await this.newsRepo.save(
-      //     scrapedData.map((news) => ({
-      //       title: news.title,
-      //       time: news.time,
-      //       category: news.category,
-      //       link: news.link,
-      //       blog: news.blog,
-      //       created_at: new Date().toISOString(),
-      //     })),
-      //   );
-      // }
+      if (scrapedData.length) {
+        await this.newsRepo.save(
+          scrapedData.map((news) => ({
+            title: news.title,
+            time: news.time,
+            category: news.category,
+            link: news.link,
+            blog: news.blog,
+            created_at: new Date().toISOString(),
+          })),
+        );
+      }
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException({
@@ -360,6 +379,12 @@ export class NewsService {
               });
           });
       });
+      scrapedData = scrapedData.filter(
+        (value) =>
+          value.time.includes('minutes') ||
+          value.time.includes('hours') ||
+          value.time.includes('hour'),
+      );
       // console.log(scrapedData);
       if (scrapedData.length) {
         await this.newsRepo.save(
@@ -424,6 +449,12 @@ export class NewsService {
             }
           });
       });
+      scrapedData = scrapedData.filter(
+        (value) =>
+          value.time.includes('minutes') ||
+          value.time.includes('hours') ||
+          value.time.includes('hour'),
+      );
       if (scrapedData.length) {
         await this.newsRepo.save(
           scrapedData.slice(0, 5).map((news) => ({
