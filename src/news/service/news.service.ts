@@ -11,6 +11,14 @@ import { NewsRepository } from '../repository/news.repository';
 import * as cheerio from 'cheerio';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 
+interface News {
+  time?: string;
+  title: string;
+  link: string;
+  blog: string;
+  category?: string;
+}
+
 @Injectable()
 export class NewsService {
   constructor(
@@ -60,7 +68,7 @@ export class NewsService {
               });
           });
       });
-      console.log(scrapedData);
+      // console.log(scrapedData);
       if (scrapedData.length) {
         await this.newsRepo.save(
           scrapedData.map((news) => ({
@@ -72,6 +80,66 @@ export class NewsService {
           })),
         );
       }
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException({
+        message: 'Unable to fetch link',
+        // status: API_RESPONSE_STATUS.FAILED,
+      });
+    }
+  }
+
+  async crawlPunchByCategory(link: string, category: string) {
+    try {
+      const userAgents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+      ];
+
+      const randomUserAgent =
+        userAgents[Math.floor(Math.random() * userAgents.length)];
+      const response = await firstValueFrom(
+        this.httpService.get(link, {
+          headers: {
+            'User-Agent': randomUserAgent,
+          },
+        }),
+      );
+      // console.log(response.data);
+      const $ = cheerio.load(response.data);
+      let scrapedData = [];
+
+      $('li.new-item').each((index, element) => {
+        // console.log(index);
+        const time = $(element).find('.meta-time').text().trim();
+        const titleElement = $(element).find('.entry-title a');
+        const title = titleElement.text().trim();
+        const link = titleElement.attr('href');
+
+        if (title && link) {
+          scrapedData.push({
+            time,
+            title,
+            link,
+            blog: 'punch',
+            category: category,
+          });
+        }
+      });
+      console.log(scrapedData);
+      // if (scrapedData.length) {
+      //   await this.newsRepo.save(
+      //     scrapedData.map((news) => ({
+      //       title: news.title,
+      //       time: news.time,
+      //       link: news.link,
+      //       blog: news.blog,
+      //       category: news.category,
+      //       created_at: new Date().toISOString(),
+      //     })),
+      //   );
+      // }
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException({
@@ -134,7 +202,7 @@ export class NewsService {
             }
           });
       });
-      console.log(scrapedData);
+      // console.log(scrapedData);
       if (scrapedData.length) {
         await this.newsRepo.save(
           scrapedData.map((news) => ({
@@ -146,6 +214,88 @@ export class NewsService {
           })),
         );
       }
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException({
+        message: 'Unable to fetch link',
+        // status: API_RESPONSE_STATUS.FAILED,
+      });
+    }
+  }
+
+  async crawlLegitByCategory(link: string, category: string) {
+    try {
+      const userAgents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+      ];
+
+      const randomUserAgent =
+        userAgents[Math.floor(Math.random() * userAgents.length)];
+      const response = await firstValueFrom(
+        this.httpService.get(link, {
+          headers: {
+            'User-Agent': randomUserAgent,
+          },
+        }),
+      );
+      // console.log(response.data);
+      const $ = cheerio.load(response.data);
+      let scrapedData: News[] = [];
+
+      $('article.c-article-card-no-border').each((index, elem) => {
+        // console.log(elem);
+        const titleHighlitedElement = $(elem).find(
+          'a.c-article-card-no-border__headline',
+        );
+
+        const titleElement = $(elem).find(
+          'a.c-article-card-no-border__headline',
+        );
+
+        const title =
+          titleHighlitedElement.text().trim() || titleElement.text().trim();
+        // console.log(titleHighlitedElement);
+        const link =
+          titleHighlitedElement.attr('href') || titleElement.attr('href');
+        const time = $(elem)
+          .find('div.c-article-info')
+          .find('time.c-article-info__time')
+          .text()
+          .trim();
+        // console.log(time);
+        // console.log(link);
+        // console.log(title);
+        //
+        if (title && link) {
+          scrapedData.push({
+            time,
+            title,
+            link,
+            blog: 'legit',
+            category: category,
+          });
+        }
+      });
+      console.log(
+        scrapedData.filter(
+          (value) =>
+            value.time.includes('minutes') || value.time.includes('hours'),
+        ),
+      );
+      // if (scrapedData.length) {
+      //   await this.newsRepo.save(
+      //     scrapedData.map((news) => ({
+      //       title: news.title,
+      //       time: news.time,
+      //       category: news.category,
+      //       link: news.link,
+      //       blog: news.blog,
+      //       created_at: new Date().toISOString(),
+      //     })),
+      //   );
+      // }
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException({
@@ -210,7 +360,7 @@ export class NewsService {
               });
           });
       });
-      console.log(scrapedData);
+      // console.log(scrapedData);
       if (scrapedData.length) {
         await this.newsRepo.save(
           scrapedData.slice(0, 5).map((news) => ({
@@ -218,6 +368,70 @@ export class NewsService {
             time: news.time,
             link: news.link,
             blog: news.blog,
+            created_at: new Date().toISOString(),
+          })),
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException({
+        message: 'Unable to fetch link',
+        // status: API_RESPONSE_STATUS.FAILED,
+      });
+    }
+  }
+
+  async crawlSaharaReportersByCategory(link: string, category: string) {
+    try {
+      const userAgents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+      ];
+
+      const siteLik = 'https://saharareporters.com';
+      const randomUserAgent =
+        userAgents[Math.floor(Math.random() * userAgents.length)];
+      const response = await firstValueFrom(
+        this.httpService.get(link, {
+          headers: {
+            'User-Agent': randomUserAgent,
+          },
+        }),
+      );
+      // console.log(response.data);
+      const $ = cheerio.load(response.data);
+      let scrapedData = [];
+
+      $('div.card').each((index, elem) => {
+        // console.log(elem);
+        $(elem)
+          .find('div.card-content')
+          .each((index, ele) => {
+            const title = $(ele).find('h2.title').text().trim();
+            // console.log(title);
+            const likeEl = $(ele).find('h2.title a');
+            const time = $(ele).find('div.card-content-bottom').text().trim();
+            const link = `${siteLik}${likeEl.attr('href')}`;
+            if (title && link) {
+              scrapedData.push({
+                time,
+                title,
+                link,
+                blog: 'sahara reporters',
+                category: category,
+              });
+            }
+          });
+      });
+      if (scrapedData.length) {
+        await this.newsRepo.save(
+          scrapedData.slice(0, 5).map((news) => ({
+            title: news.title,
+            time: news.time,
+            link: news.link,
+            blog: news.blog,
+            category: news.category,
             created_at: new Date().toISOString(),
           })),
         );
@@ -276,13 +490,27 @@ export class NewsService {
     }
   }
 
-  async getNews() {
-    const newsData = await this.newsRepo.find({
-      order: {
-        time: 'DESC',
-        created_at: 'DESC',
-      },
-    });
+  async getNews(category?: string) {
+    let newsData: NewsEntity[];
+
+    if (category) {
+      newsData = await this.newsRepo.find({
+        where: {
+          category: category,
+        },
+        order: {
+          time: 'DESC',
+          created_at: 'DESC',
+        },
+      });
+    } else {
+      newsData = await this.newsRepo.find({
+        order: {
+          time: 'DESC',
+          created_at: 'DESC',
+        },
+      });
+    }
 
     const groupedNews = newsData.reduce(
       (acc, item) => {

@@ -19,6 +19,9 @@ export class NewsEntity {
   time: string;
 
   @Column({ type: 'text', nullable: true })
+  category: string;
+
+  @Column({ type: 'text', nullable: true })
   link: string;
 
   @Column({ type: 'text', nullable: true })

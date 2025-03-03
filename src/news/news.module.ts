@@ -7,6 +7,9 @@ import { NewsRepository } from './repository/news.repository';
 import { TasksService } from '../core/services/task.service';
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/cache-manager';
+import { SaharaService } from 'src/core/services/sahara.service';
+import { PunchService } from 'src/core/services/punch.service';
+import { LegitService } from 'src/core/services/legit.service';
 
 @Module({
   imports: [
@@ -15,7 +18,14 @@ import { CacheModule } from '@nestjs/cache-manager';
     CacheModule.register(),
   ],
   controllers: [NewsController],
-  providers: [NewsService, NewsRepository, TasksService],
+  providers: [
+    NewsService,
+    NewsRepository,
+    TasksService,
+    SaharaService,
+    PunchService,
+    LegitService,
+  ],
   exports: [TypeOrmModule.forFeature([NewsEntity])],
 })
 export class NewsModule {}
