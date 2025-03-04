@@ -533,6 +533,7 @@ export class NewsService {
           time: 'DESC',
           created_at: 'DESC',
         },
+        take: 5,
       });
     } else {
       newsData = await this.newsRepo.find({
@@ -540,6 +541,7 @@ export class NewsService {
           time: 'DESC',
           created_at: 'DESC',
         },
+        take: 5,
       });
     }
 
@@ -559,15 +561,26 @@ export class NewsService {
       news,
     }));
 
-    const cachedNews = await this.cacheManager.get('news');
-    if (!cachedNews) {
-      const hour = 1000 * 60;
-      await this.cacheManager.set('news', data, hour);
+    if (category) {
+      const cachedNews = await this.cacheManager.get(category);
+      if (!cachedNews) {
+        const hour = 1000 * 60;
+        await this.cacheManager.set(category, data, hour);
 
-      return data;
+        return data;
+      }
+      return await cachedNews;
+    } else {
+      const cachedNews = await this.cacheManager.get('feeds');
+      if (!cachedNews) {
+        const hour = 1000 * 60;
+        await this.cacheManager.set('feeds', data, hour);
+
+        return data;
+      }
+      // await this.cacheManager.clear();
+      return await cachedNews;
     }
-    // await this.cacheManager.clear();
-    return await cachedNews;
   }
 
   async deleteNews() {
