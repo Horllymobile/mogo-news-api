@@ -76,7 +76,7 @@ export class NewsService {
           value.time.includes('hours') ||
           value.time.includes('hour'),
       );
-      console.log('crawlPunch', scrapedData);
+      // console.log('crawlPunch', scrapedData);
       if (scrapedData.length) {
         await this.newsRepo.save(
           scrapedData.map((news) => ({
@@ -223,7 +223,7 @@ export class NewsService {
           value.time.includes('hours') ||
           value.time.includes('hour'),
       );
-      console.log('crawlLegit', scrapedData);
+      // console.log('crawlLegit', scrapedData);
       if (scrapedData.length) {
         await this.newsRepo.save(
           scrapedData.map((news) => ({
@@ -308,7 +308,6 @@ export class NewsService {
       );
 
       if (scrapedData.length) {
-        await this.cacheManager.clear();
         await this.newsRepo.save(
           scrapedData.map((news) => ({
             title: news.title,
@@ -390,7 +389,6 @@ export class NewsService {
         value.time.includes(todayDate),
       );
       if (scrapedData.length) {
-        await this.cacheManager.clear();
         await this.newsRepo.save(
           scrapedData.map((news) => ({
             title: news.title,
@@ -458,7 +456,6 @@ export class NewsService {
         value.time.includes(todayDate),
       );
       if (scrapedData.length) {
-        await this.cacheManager.clear();
         await this.newsRepo.save(
           scrapedData.map((news) => ({
             title: news.title,
@@ -520,7 +517,7 @@ export class NewsService {
         }
       });
 
-      console.log(scrapedData);
+      // console.log(scrapedData);
 
       if (scrapedData.length) {
         await this.newsRepo.save(
@@ -582,7 +579,7 @@ export class NewsService {
         }
       });
 
-      console.log(scrapedData);
+      // console.log(scrapedData);
 
       if (scrapedData.length) {
         await this.newsRepo.save(
@@ -607,26 +604,17 @@ export class NewsService {
   async getNews(category?: string) {
     let newsData: NewsEntity[];
 
-    if (category) {
-      newsData = await this.newsRepo.find({
-        where: {
-          category: category,
-        },
-        order: {
-          time: 'DESC',
-          created_at: 'DESC',
-        },
-        take: 5,
-      });
-    } else {
-      newsData = await this.newsRepo.find({
-        order: {
-          time: 'DESC',
-          created_at: 'DESC',
-        },
-        take: 5,
-      });
-    }
+    newsData = await this.newsRepo.find({
+      where: {
+        // ...(category && { category: category }),
+      },
+      order: {
+        time: 'DESC',
+        created_at: 'DESC',
+      },
+    });
+
+    console.log(newsData);
 
     const groupedNews = newsData.reduce(
       (acc, item) => {
@@ -644,28 +632,25 @@ export class NewsService {
       news,
     }));
 
-    return data;
+    if (category) {
+      const cachedNews = await this.cacheManager.get(category);
+      if (!cachedNews) {
+        const hour = 1000 * 60;
+        await this.cacheManager.set(category, data, hour);
 
-    // if (category) {
-    //   const cachedNews = await this.cacheManager.get(category);
-    //   if (!cachedNews) {
-    //     const hour = 1000 * 60;
-    //     await this.cacheManager.set(category, data, hour);
+        return data;
+      }
+      return await cachedNews;
+    } else {
+      const cachedNews = await this.cacheManager.get('feeds');
+      if (!cachedNews) {
+        const hour = 1000 * 60;
+        await this.cacheManager.set('feeds', data, hour);
 
-    //     return data;
-    //   }
-    //   return await cachedNews;
-    // } else {
-    //   const cachedNews = await this.cacheManager.get('feeds');
-    //   if (!cachedNews) {
-    //     const hour = 1000 * 60;
-    //     await this.cacheManager.set('feeds', data, hour);
-
-    //     return data;
-    //   }
-    //   // await this.cacheManager.clear();
-    //   return await cachedNews;
-    // }
+        return data;
+      }
+      return await cachedNews;
+    }
   }
 
   async deleteNews() {
