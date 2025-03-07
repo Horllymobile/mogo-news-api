@@ -614,7 +614,7 @@ export class NewsService {
       },
     });
 
-    console.log(newsData);
+    // console.log(newsData);
 
     const groupedNews = newsData.reduce(
       (acc, item) => {
