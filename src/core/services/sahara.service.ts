@@ -12,7 +12,7 @@ export class SaharaService {
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlSaharaReporters' })
   async crawlSaharaReporters() {
     this.logger.debug('crawlSaharaReporters News Every 1 hour');
-    // await this.newsService.crawlSaharaReporters();
+    await this.newsService.crawlSaharaReporters();
   }
 
   // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlSaharaReportersPolitics' })

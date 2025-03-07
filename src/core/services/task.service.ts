@@ -12,6 +12,6 @@ export class TasksService {
   @Cron(CronExpression.EVERY_HOUR, { name: 'deleteNews' })
   async deleteNews() {
     this.logger.debug('deleteNews News Every 1 hour');
-    // await this.newsService.deleteNews();
+    await this.newsService.deleteNews();
   }
 }

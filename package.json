@@ -34,6 +34,7 @@
     "axios": "^1.8.1",
     "cache-manager": "^6.4.0",
     "cheerio": "^1.0.0",
+    "dayjs": "^1.11.13",
     "helmet": "^8.0.0",
     "pg": "^8.13.3",
     "reflect-metadata": "^0.2.0",

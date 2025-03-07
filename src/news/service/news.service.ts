@@ -10,6 +10,8 @@ import { NewsEntity } from '../entity/news.entity';
 import { NewsRepository } from '../repository/news.repository';
 import * as cheerio from 'cheerio';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import * as dayjs from 'dayjs';
+import { link } from 'fs';
 
 interface News {
   time?: string;
@@ -74,7 +76,7 @@ export class NewsService {
           value.time.includes('hours') ||
           value.time.includes('hour'),
       );
-      // console.log(scrapedData);
+      console.log('crawlPunch', scrapedData);
       if (scrapedData.length) {
         await this.newsRepo.save(
           scrapedData.map((news) => ({
@@ -214,13 +216,14 @@ export class NewsService {
             }
           });
       });
-      // console.log(scrapedData);
+
       scrapedData = scrapedData.filter(
         (value) =>
           value.time.includes('minutes') ||
           value.time.includes('hours') ||
           value.time.includes('hour'),
       );
+      console.log('crawlLegit', scrapedData);
       if (scrapedData.length) {
         await this.newsRepo.save(
           scrapedData.map((news) => ({
@@ -303,7 +306,9 @@ export class NewsService {
           value.time.includes('hours') ||
           value.time.includes('hour'),
       );
+
       if (scrapedData.length) {
+        await this.cacheManager.clear();
         await this.newsRepo.save(
           scrapedData.map((news) => ({
             title: news.title,
@@ -379,16 +384,15 @@ export class NewsService {
               });
           });
       });
-      scrapedData = scrapedData.filter(
-        (value) =>
-          value.time.includes('minutes') ||
-          value.time.includes('hours') ||
-          value.time.includes('hour'),
+
+      const todayDate = this.formatDate();
+      scrapedData = scrapedData.filter((value) =>
+        value.time.includes(todayDate),
       );
-      // console.log(scrapedData);
       if (scrapedData.length) {
+        await this.cacheManager.clear();
         await this.newsRepo.save(
-          scrapedData.slice(0, 5).map((news) => ({
+          scrapedData.map((news) => ({
             title: news.title,
             time: news.time,
             link: news.link,
@@ -449,21 +453,84 @@ export class NewsService {
             }
           });
       });
-      scrapedData = scrapedData.filter(
-        (value) =>
-          value.time.includes('minutes') ||
-          value.time.includes('hours') ||
-          value.time.includes('hour'),
+      const todayDate = this.formatDate();
+      scrapedData = scrapedData.filter((value) =>
+        value.time.includes(todayDate),
       );
       if (scrapedData.length) {
+        await this.cacheManager.clear();
         await this.newsRepo.save(
-          scrapedData.slice(0, 5).map((news) => ({
+          scrapedData.map((news) => ({
             title: news.title,
             time: news.time,
             link: news.link,
             blog: news.blog,
             category: news.category,
             created_at: new Date().toISOString(),
+          })),
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException({
+        message: 'Unable to fetch link',
+        // status: API_RESPONSE_STATUS.FAILED,
+      });
+    }
+  }
+
+  async crawlPulseNgByCategory(link: string, category: string) {
+    try {
+      const userAgents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+      ];
+
+      const url = 'https://www.pulse.ng';
+      const randomUserAgent =
+        userAgents[Math.floor(Math.random() * userAgents.length)];
+      const response = await firstValueFrom(
+        this.httpService.get(link, {
+          headers: {
+            'User-Agent': randomUserAgent,
+          },
+        }),
+      );
+      // console.log(response.data);
+      const $ = cheerio.load(response.data);
+      let scrapedData = [];
+      $('section.news-card__content__text').each((index, element) => {
+        const a = $(element).find(
+          'div.news-card__content__text__title-wrapper a',
+        );
+
+        const link = `${url}${a.attr('href')}`;
+
+        const title = a.text().trim();
+
+        if (title && link) {
+          scrapedData.push({
+            time: this.formatDate(),
+            title,
+            link,
+            blog: 'pulse',
+            category,
+          });
+        }
+      });
+
+      console.log(scrapedData);
+
+      if (scrapedData.length) {
+        await this.newsRepo.save(
+          scrapedData.map((news) => ({
+            title: news.title,
+            time: news.time,
+            link: news.link,
+            blog: news.blog,
+            created_at: new Date().toISOString(),
+            category: news.category,
           })),
         );
       }
@@ -484,34 +551,50 @@ export class NewsService {
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
       ];
 
-      const link = 'https://www.pulse.ng/';
-      //   const randomUserAgent =
-      //     userAgents[Math.floor(Math.random() * userAgents.length)];
-      //   const response = await firstValueFrom(
-      //     this.httpService.get(link, {
-      //       headers: {
-      //         'User-Agent': randomUserAgent,
-      //       },
-      //     }),
-      //   );
+      const url = 'https://www.pulse.ng';
+      const randomUserAgent =
+        userAgents[Math.floor(Math.random() * userAgents.length)];
+      const response = await firstValueFrom(
+        this.httpService.get(url, {
+          headers: {
+            'User-Agent': randomUserAgent,
+          },
+        }),
+      );
       // console.log(response.data);
-      //   const $ = cheerio.load(response.data);
-      //   let scrapedData = [];
+      const $ = cheerio.load(response.data);
+      let scrapedData = [];
+      $('article.trending-card-listing-wrapper').each((index, element) => {
+        const a = $(element).find('a');
 
-      // CategoriesExploration_articlecard-wrapper__NZmqF
+        const link = `${url}${a.attr('href')}`;
 
-      //   console.log(scrapedData);
-      //   if (scrapedData.length) {
-      //     await this.newsRepo.save(
-      //       scrapedData.map((news) => ({
-      //         title: news.title,
-      //         time: news.time,
-      //         link: news.link,
-      //         blog: news.blog,
-      //         created_at: new Date().toISOString(),
-      //       })),
-      //     );
-      //   }
+        const title = a.text().trim();
+        console.log(a.text().trim());
+
+        if (title && link) {
+          scrapedData.push({
+            time: this.formatDate(),
+            title,
+            link,
+            blog: 'pulse',
+          });
+        }
+      });
+
+      console.log(scrapedData);
+
+      if (scrapedData.length) {
+        await this.newsRepo.save(
+          scrapedData.map((news) => ({
+            title: news.title,
+            time: news.time,
+            link: news.link,
+            blog: news.blog,
+            created_at: new Date().toISOString(),
+          })),
+        );
+      }
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException({
@@ -561,26 +644,28 @@ export class NewsService {
       news,
     }));
 
-    if (category) {
-      const cachedNews = await this.cacheManager.get(category);
-      if (!cachedNews) {
-        const hour = 1000 * 60;
-        await this.cacheManager.set(category, data, hour);
+    return data;
 
-        return data;
-      }
-      return await cachedNews;
-    } else {
-      const cachedNews = await this.cacheManager.get('feeds');
-      if (!cachedNews) {
-        const hour = 1000 * 60;
-        await this.cacheManager.set('feeds', data, hour);
+    // if (category) {
+    //   const cachedNews = await this.cacheManager.get(category);
+    //   if (!cachedNews) {
+    //     const hour = 1000 * 60;
+    //     await this.cacheManager.set(category, data, hour);
 
-        return data;
-      }
-      // await this.cacheManager.clear();
-      return await cachedNews;
-    }
+    //     return data;
+    //   }
+    //   return await cachedNews;
+    // } else {
+    //   const cachedNews = await this.cacheManager.get('feeds');
+    //   if (!cachedNews) {
+    //     const hour = 1000 * 60;
+    //     await this.cacheManager.set('feeds', data, hour);
+
+    //     return data;
+    //   }
+    //   // await this.cacheManager.clear();
+    //   return await cachedNews;
+    // }
   }
 
   async deleteNews() {
@@ -588,5 +673,10 @@ export class NewsService {
     if (newsData.length > 0) {
       await this.newsRepo.delete(newsData.map((news) => news.id));
     }
+  }
+
+  formatDate(date?: string) {
+    const day = dayjs(date || new Date());
+    return day.format('MMMM D, YYYY');
   }
 }

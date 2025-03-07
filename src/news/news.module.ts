@@ -10,6 +10,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { SaharaService } from 'src/core/services/sahara.service';
 import { PunchService } from 'src/core/services/punch.service';
 import { LegitService } from 'src/core/services/legit.service';
+import { PulseService } from 'src/core/services/pulse.service';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { LegitService } from 'src/core/services/legit.service';
     SaharaService,
     PunchService,
     LegitService,
+    PulseService,
   ],
   exports: [TypeOrmModule.forFeature([NewsEntity])],
 })

@@ -12,7 +12,7 @@ export class LegitService {
   @Cron(CronExpression.EVERY_HOUR, { name: 'crawlLegitNg' })
   async crawlLegitNg() {
     this.logger.debug('crawlLegitNg News Every 1 hour');
-    // await this.newsService.crawlLegit();
+    await this.newsService.crawlLegit();
   }
 
   // @Cron(CronExpression.EVERY_MINUTE, { name: 'crawlLegitPolitics' })
