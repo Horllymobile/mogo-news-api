@@ -606,7 +606,7 @@ export class NewsService {
 
     newsData = await this.newsRepo.find({
       where: {
-        // ...(category && { category: category }),
+        ...(category && { category: category }),
       },
       order: {
         time: 'DESC',
