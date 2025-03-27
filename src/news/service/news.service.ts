@@ -635,7 +635,7 @@ export class NewsService {
     if (category) {
       const cachedNews = await this.cacheManager.get(category);
       if (!cachedNews) {
-        const hour = 1000 * 60;
+        const hour = 1000 * 30;
         await this.cacheManager.set(category, data, hour);
 
         return data;
@@ -644,7 +644,7 @@ export class NewsService {
     } else {
       const cachedNews = await this.cacheManager.get('feeds');
       if (!cachedNews) {
-        const hour = 1000 * 60;
+        const hour = 1000 * 30;
         await this.cacheManager.set('feeds', data, hour);
 
         return data;
